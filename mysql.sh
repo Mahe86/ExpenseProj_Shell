@@ -5,7 +5,7 @@ R="\e[31m" # Print Red color
 G="\e[32m" # Print Green color
 Y="\e[33m" # Print Yellow color
 N="\e[0m" # Print Default White color
-LOGS_FOLDER="/var/log/Expenseshelllogs"
+LOGS_FOLDER="/var/log/Expense-logs"
 LOG_FILE=$(echo $0 | cut -d "." -f1)
 TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
 LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
@@ -13,14 +13,15 @@ LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
 
 mkdir -p $LOGS_FOLDER
 echo "Created the $LOGS_FOLDER directory"
-echo "Started the shell script at $TIMESTAMP" &>>$LOG_FILE_NAME
 
+CHECK_ROOT()
+{
 if [ $USERID -ne 0 ]
 then
     echo "ERROR : User does not have SUDO access to execute this script"
     exit 1 # Other than 0
 fi
-
+}
 
 VALIDATE()
 {
@@ -33,6 +34,9 @@ VALIDATE()
     fi
 }
 
+echo "Started the shell script at $TIMESTAMP" &>>$LOG_FILE_NAME
+
+CHECK_ROOT
 
 dnf list installed mysql-server &>>$LOG_FILE_NAME
 
@@ -46,5 +50,10 @@ else
 fi
 
 systemctl enable mysqld &>>$LOG_FILE_NAME
-systemctl restart mysqld &>>$LOG_FILE_NAME
-mysql_secure_installation --set-root-pass ExpenseApp@1 
+VALIDATE $? "Enable MYSQL Server"
+
+systemctl start mysqld &>>$LOG_FILE_NAME
+VALIDATE $? "Starting MYSQL Server"
+
+mysql_secure_installation --set-root-pass ExpenseApp@1
+VALIDATE $? "Setting Root password"
