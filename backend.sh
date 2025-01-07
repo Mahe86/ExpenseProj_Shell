@@ -61,9 +61,6 @@ else
     echo "Expense user already created"
 fi
 
-rm -rf $PWD/app/* &>>$LOG_FILE_NAME
-VALIDATE $? "Deleted files under app directory"
-
 mkdir -p /app &>>$LOG_FILE_NAME
 VALIDATE $? "Created app directory"
 
@@ -71,6 +68,9 @@ curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expen
 VALIDATE $? "Downloading backend"
 
 cd /app
+
+rm -rf /app/* &>>$LOG_FILE_NAME
+VALIDATE $? "Deleted files under app directory"
 
 unzip /tmp/backend.zip &>>$LOG_FILE_NAME
 VALIDATE $? "unzip backend"
