@@ -5,7 +5,7 @@ R="\e[31m" # Print Red color
 G="\e[32m" # Print Green color
 Y="\e[33m" # Print Yellow color
 N="\e[0m" # Print Default White color
-LOGS_FOLDER="/var/log/Expenseshelllogs"
+LOGS_FOLDER="/var/log/Expense-logs"
 LOG_FILE=$(echo $0 | cut -d "." -f1)
 TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
 LOG_FILE_NAME="$LOGS_FOLDER/$LOG_FILE-$TIMESTAMP.log"
@@ -68,7 +68,7 @@ VALIDATE $? "unzip backend"
 npm install
 VALIDATE $? "Install dependencies"
 
-cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service
+cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
 VALIDATE $? "Copying backend service file"
 
 dnf list installed mysql &>>$LOG_FILE_NAME
@@ -82,14 +82,14 @@ else
     echo -e "$Y mysql is already Installed $N"
 fi
 
-mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pExpenseApp@1 < /app/schema/backend.sql
+mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE_NAME
 VALIDATE $? "Setting up the transactions shema and tables"
 
-systemctl daemon-reload
+systemctl daemon-reload &>>$LOG_FILE_NAME
 VALIDATE $? "Daemon reload"
 
-systemctl enable backend
+systemctl enable backend &>>$LOG_FILE_NAME
 VALIDATE $? "Enable backend"
 
-systemctl restart backend
+systemctl restart backend &>>$LOG_FILE_NAME
 VALIDATE $? "Restart backend"
