@@ -93,7 +93,7 @@ else
     echo -e "$Y mysql is already Installed $N"
 fi
 
-mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE_NAME
+mysql -h mysql.mahedevops.online -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>$LOG_FILE_NAME
 VALIDATE $? "Setting up the transactions shema and tables"
 
 systemctl daemon-reload &>>$LOG_FILE_NAME
