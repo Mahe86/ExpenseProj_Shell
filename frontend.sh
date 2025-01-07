@@ -33,7 +33,6 @@ VALIDATE()
     fi
 }
 
-
 dnf module list nginx &>>$LOG_FILE_NAME
 if [ $? -ne 0 ]
 then
@@ -53,6 +52,9 @@ cd /usr/share/nginx/html
 
 unzip /tmp/frontend.zip &>>$LOG_FILE_NAME
 VALIDATE $? "Unzipping front end files"
+
+cp /home/ec2-user/ExpenseProj_Shell/expense.conf /etc/nginx/default.d/expense.conf &>>$LOG_FILE_NAME
+VALIDATE $? "Copying expense.conf file"
 
 systemctl enable nginx &>>$LOG_FILE_NAME
 VALIDATE $? "Enable nginx"
