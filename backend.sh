@@ -78,8 +78,10 @@ VALIDATE $? "unzip backend"
 npm install &>>$LOG_FILE_NAME
 VALIDATE $? "Install dependencies"
 
-cp $PWD/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
-#cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
+#cp $PWD/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
+echo "$PWD"
+echo "$HOME"
+cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
 VALIDATE $? "Copying backend service file"
 
 dnf list installed mysql &>>$LOG_FILE_NAME
