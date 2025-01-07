@@ -33,10 +33,10 @@ VALIDATE()
     fi
 }
 
-dnf module disable nodejs -y
+dnf module disable nodejs -y &>>$LOG_FILE_NAME
 VALIDATE $? "Disable nodejs"
 
-dnf module enable nodejs:20 -y
+dnf module enable nodejs:20 -y &>>$LOG_FILE_NAME
 VALIDATE $? "Enable nodejs 20"
 
 
@@ -51,8 +51,16 @@ else
     echo -e "$Y nodejs is already Installed $N"
 fi
 
-useradd expense
-VALIDATE $? "User has been added"
+id expense &>>$LOG_FILE_NAME
+if [ $? -ne 0 ]
+then
+    echo "Expense user is not created"
+    useradd expense
+    VALIDATE $? "User has been added"
+else
+    echo "Expense user already created"
+fi
+
 
 mkdir -p /app
 VALIDATE $? "Created app directory"
@@ -68,7 +76,7 @@ VALIDATE $? "unzip backend"
 npm install
 VALIDATE $? "Install dependencies"
 
-cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service &>>$LOG_FILE_NAME
+cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service
 VALIDATE $? "Copying backend service file"
 
 dnf list installed mysql &>>$LOG_FILE_NAME
