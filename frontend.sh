@@ -42,13 +42,13 @@ else
     echo -e "$Y nginx is already Installed $N"
 fi
 
-rm -rf /usr/share/nginx/html/* &>>$LOG_FILE_NAME
-VALIDATE $? "Deleting old files"
-
 curl -o /tmp/frontend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip &>>$LOG_FILE_NAME
 VALIDATE $? "Downloading front end files"
 
 cd /usr/share/nginx/html
+
+rm -rf /usr/share/nginx/html/* &>>$LOG_FILE_NAME
+VALIDATE $? "Deleting old files"
 
 unzip /tmp/frontend.zip &>>$LOG_FILE_NAME
 VALIDATE $? "Unzipping front end files"
