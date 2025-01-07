@@ -34,7 +34,10 @@ VALIDATE()
 }
 
 dnf module disable nodejs -y
+VALIDATE $? "Disable nodejs"
+
 dnf module enable nodejs:20 -y
+VALIDATE $? "Enable nodejs 20"
 
 
 dnf list installed nodejs &>>$LOG_FILE_NAME
@@ -49,18 +52,24 @@ else
 fi
 
 useradd expense
+VALIDATE $? "User has been added"
 
 mkdir -p /app
+VALIDATE $? "Created app directory"
+
 curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
+VALIDATE $? "Downloading backend"
+
 cd /app
+
 unzip /tmp/backend.zip
+VALIDATE $? "unzip backend"
+
 npm install
+VALIDATE $? "Install dependencies"
+
 cp /home/ec2-user/ExpenseProj_Shell/backend.service /etc/systemd/system/backend.service
-
-systemctl daemon-reload
-systemctl start backend
-systemctl enable backend
-
+VALIDATE $? "Copying backend service file"
 
 dnf list installed mysql &>>$LOG_FILE_NAME
 
@@ -74,5 +83,13 @@ else
 fi
 
 mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pExpenseApp@1 < /app/schema/backend.sql
+VALIDATE $? "Setting up the transactions shema and tables"
+
+systemctl daemon-reload
+VALIDATE $? "Daemon reload"
+
+systemctl enable backend
+VALIDATE $? "Enable backend"
 
 systemctl restart backend
+VALIDATE $? "Restart backend"
